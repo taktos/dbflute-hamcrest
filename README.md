@@ -55,6 +55,14 @@ Features
 	assertThat(id30.isPresent(), is(false));
 	```
 
+Compatibility Matrix
+--------------------
+
+|dbflute-testing|dbflute-runtime|JDK|
+|---------------|---------------|---|
+|1.0.x (1.0-jdk6 branch)|1.0.x|1.6+|
+|2.0.x (master branch)  |1.1.x|8+  |
+
 Usage
 ---------
 
