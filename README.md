@@ -18,17 +18,6 @@ Features
 	assertThat(cb, hasCondition("memberName", equal(startsWith("John"))));
 	assertThat(cb, hasCondition("memberId", greaterThan(10)));
 	```
-- ArgumentCaptor for capturing ConditionBean from lambda parameter
-	```java
-	MemberBhv bhv = mock(MemberBhv.class);
-	bhv.selectEntity(cb -> cb.query().setMemberId_Equal(10));
-	
-	BehaviorArgumentCaptor<MemberCB> captor = BehaviorArgumentCaptor.of(MemberCB.class);
-	verify(bhv).selectEntity(captor.capture());
-	
-	MemberCB cb = captor.getCB();
-	assertThat(cb, hasCondition("memberId", equal(10)));
-	```
 - ArgumentMatcher for changing Behavior return value
 	```java
 	MemberBhv bhv = mock(MemberBhv.class);
@@ -64,7 +53,7 @@ Usage
 <dependency>
     <groupId>org.dbflute</groupId>
     <artifactId>dbflute-test-support</artifactId>
-    <version>2.0.0</version>
+    <version>1.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -72,8 +61,8 @@ Usage
 Requirements
 ------------
 
-- Java8
-- DBFlute 1.1.x
+- Java6+
+- DBFlute 1.0.x **(Not compatible with 1.1.x)**
 - Hamcrest
 - Mockito
 
