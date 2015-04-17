@@ -15,9 +15,9 @@
  */
 package org.dbflute.testing.cb;
 
-import org.dbflute.cbean.ConditionBean;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.seasar.dbflute.cbean.ConditionBean;
 
 /**
  * Matches when the argument has same conditions.

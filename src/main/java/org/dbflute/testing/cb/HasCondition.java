@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.dbflute.cbean.ConditionBean;
-import org.dbflute.cbean.ConditionQuery;
-import org.dbflute.cbean.cvalue.ConditionValue;
-import org.dbflute.util.DfReflectionUtil;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.seasar.dbflute.cbean.ConditionBean;
+import org.seasar.dbflute.cbean.ConditionQuery;
+import org.seasar.dbflute.cbean.cvalue.ConditionValue;
+import org.seasar.dbflute.util.DfReflectionUtil;
 
 /**
  * This is the matcher that gets one {@link ConditionValue} from {@code T}
@@ -108,9 +108,14 @@ public class HasCondition<T extends ConditionBean> extends BaseMatcher<T> {
 		} catch (NoSuchMethodException e) {
 			// retry with old naming rule
 			try {
-				method = cq.getClass().getMethod("xget" + capitalName);
+				method = cq.getClass().getMethod("get" + capitalName);
 			} catch (NoSuchMethodException oe) {
-				throw e;
+				// retry with another naming rule
+				try {
+					method = cq.getClass().getMethod("xget" + capitalName);
+				} catch (NoSuchMethodException xoe) {
+					throw e;
+				}
 			}
 		}
 		return (ConditionValue) DfReflectionUtil.invoke(method, cq, null);

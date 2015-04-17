@@ -15,11 +15,11 @@
  */
 package org.dbflute.testing.cb;
 
-import org.dbflute.cbean.ConditionBean;
-import org.dbflute.cbean.sqlclause.SqlClause;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.seasar.dbflute.cbean.ConditionBean;
+import org.seasar.dbflute.cbean.sqlclause.SqlClause;
 
 /**
  * Matches when the ConditionBean has any where clause.

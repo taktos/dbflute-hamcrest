@@ -19,16 +19,17 @@ import static org.dbflute.testing.cb.IsColumnExpressed.expressed;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Matchers.argThat;
 
-import org.dbflute.bhv.readable.CBCall;
-import org.dbflute.cbean.ConditionBean;
-import org.dbflute.cbean.cvalue.ConditionValue;
 import org.dbflute.testing.cb.ComparisonOperator;
 import org.dbflute.testing.cb.HasCondition;
 import org.dbflute.testing.cb.IsColumnExpressed;
 import org.dbflute.testing.cb.IsColumnIsNotNull;
 import org.dbflute.testing.cb.IsColumnIsNull;
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Matchers;
+import org.seasar.dbflute.cbean.ConditionBean;
+import org.seasar.dbflute.cbean.cvalue.ConditionValue;
 
 /**
  * Static factory of custom matchers.
@@ -41,33 +42,27 @@ public final class DBFluteMatchers {
 	private DBFluteMatchers() {}
 
 	/**
-	 * Creates a method argument captor.
-	 * @param clazz the class of ConditionBean implementation
-	 * @return captor
-	 */
-	public static <T extends ConditionBean> BehaviorArgumentCaptor<T> captor(Class<T> clazz) {
-		return new BehaviorArgumentCaptor<T>(clazz);
-	}
-
-	/**
 	 * Allows creating custom argument matcher that evaluates ConditionBean.
 	 * @param cbclass class of ConditionBean implementation
 	 * @param matcher the matcher to apply to ConditionBean
 	 * @return <code>null</code>
 	 * @see Matchers#argThat(Matcher)
 	 */
-	public static <T extends ConditionBean> CBCall<T> argCB(Class<T> cbclass, Matcher<T> matcher) {
-		return argThat(cb(cbclass, matcher));
-	}
-
-	/**
-	 * Creates an argument matcher that evaluates ConditionBean.
-	 * @param cbclass class of ConditionBean implementation
-	 * @param matcher the matcher to apply to ConditionBean
-	 * @return argument matcher
-	 */
-	public static <T extends ConditionBean> BehaviorArgumentMatcher<T> cb(Class<T> cbclass, Matcher<T> matcher) {
-		return new BehaviorArgumentMatcher<T>(cbclass, matcher);
+	public static <T extends ConditionBean> T argCB(Class<T> cbclass, final Matcher<?> matcher) {
+		return argThat(new ArgumentMatcher<T>() {
+			@Override
+			public boolean matches(Object argument) {
+				return matcher.matches(argument);
+			}
+			@Override
+			public void describeTo(Description description) {
+				description.appendDescriptionOf(matcher);
+			}
+			@Override
+			public void describeMismatch(Object item, Description description) {
+				matcher.describeMismatch(item, description);
+			}
+		});
 	}
 
 	/**

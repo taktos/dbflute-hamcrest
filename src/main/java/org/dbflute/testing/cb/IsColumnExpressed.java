@@ -17,11 +17,11 @@ package org.dbflute.testing.cb;
 
 import java.lang.reflect.Method;
 
-import org.dbflute.cbean.cvalue.ConditionValue;
-import org.dbflute.util.DfReflectionUtil;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.seasar.dbflute.cbean.cvalue.ConditionValue;
+import org.seasar.dbflute.util.DfReflectionUtil;
 
 /**
  * Abstract class of matchers that evaluates the column condition value.

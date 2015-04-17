@@ -15,9 +15,9 @@
  */
 package org.dbflute.testing.cb;
 
-import org.dbflute.cbean.cvalue.ConditionValue;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.seasar.dbflute.cbean.cvalue.ConditionValue;
 
 /**
  * Matches when the column has is not null condition.
