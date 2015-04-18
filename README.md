@@ -28,20 +28,24 @@ Features
 	Member m2 = new Member();
 	m2.setMemberName("Jane Doe");
 	
-	when(bhv.selectEntity(any())).thenReturn(OptionalEntity.empty());
 	when(bhv.selectEntity(argCB(MemberCB.class
-	        , hasCondition("memberId", equal(10))))).thenReturn(OptionalEntity.of(m1));
+	        , hasCondition("memberId", equal(10))))).thenReturn(m1);
 	when(bhv.selectEntity(argCB(MemberCB.class
-	        , hasCondition("memberId", equal(20))))).thenReturn(OptionalEntity.of(m2));
+	        , hasCondition("memberId", equal(20))))).thenReturn(m2);
 	
-	OptionalEntity<Member> id10 = bhv.selectEntity(cb -> cb.query().setMemberId_Equal(10));
-	assertThat(id10.get().getMemberName(), is("John Doe"));
+	MemberCB cb = new MemberCB();
+	cb.query.setMemberId_Equal(10);
 	
-	OptionalEntity<Member> id20 = bhv.selectEntity(cb -> cb.query().setMemberId_Equal(20));
-	assertThat(id20.get().getMemberName(), is("Jane Doe"));
+	Member id10 = bhv.selectEntity(cb);
+	assertThat(id10.getMemberName(), is("John Doe"));
 	
-	OptionalEntity<Member> id30 = bhv.selectEntity(cb -> cb.query().setMemberId_Equal(30));
-	assertThat(id30.isPresent(), is(false));
+	cb.query.setMemberId_Equal(20);
+	Member id20 = bhv.selectEntity(cb);
+	assertThat(id20.getMemberName(), is("Jane Doe"));
+	
+	cb.query().setMemberId_Equal(30);
+	Member id30 = bhv.selectEntity(cb);
+	assertThat(id30, is(nullValue()));
 	```
 
 Compatibility Matrix
