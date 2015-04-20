@@ -31,6 +31,14 @@ import org.hamcrest.Matcher;
 /**
  * This is the matcher that gets one {@link ConditionValue} from {@code T}
  * instance for further assertion.
+ * <p>
+ * Example:
+ * <pre>{@code
+ * MemberCB cb = ...;
+ * cb.query().setMemberName_Equal("John Doe");
+ *
+ * assertThat(cb, hasCondition("memberName", equal("John Doe")));
+ * }</pre>
  *
  * @param <T> the type of ConditionBean implementation
  * @author taktos
@@ -38,26 +46,20 @@ import org.hamcrest.Matcher;
  */
 public class HasCondition<T extends ConditionBean> extends BaseMatcher<T> {
 
-	private String column;
-	private Matcher<?> matcher;
+	protected final String column;
+	protected final Matcher<?> matcher;
 
 	public HasCondition(String column, Matcher<?> matcher) {
 		this.column = column;
 		this.matcher = matcher;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean matches(Object item) {
 		if (item == null) {
 			return false;
 		}
-		ConditionValue cv;
-		try {
-			cv = getValue((T) item, column);
-		} catch (NoSuchMethodException e) {
-			throw new IllegalArgumentException(e);
-		}
+		ConditionValue cv = getConditionValue(item, column);
 		return matcher.matches(cv);
 	}
 
@@ -67,17 +69,10 @@ public class HasCondition<T extends ConditionBean> extends BaseMatcher<T> {
 		description.appendDescriptionOf(matcher);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void describeMismatch(Object item, Description description) {
 		description.appendText(column + " ");
-		ConditionValue cv;
-		try {
-			cv = getValue((T) item, column);
-		} catch (NoSuchMethodException e) {
-			description.appendText("has no condition");
-			return;
-		}
+		ConditionValue cv = getConditionValue(item, column);
 		matcher.describeMismatch(cv, description);
 
 		List<String> values = new ArrayList<String>();
@@ -98,10 +93,22 @@ public class HasCondition<T extends ConditionBean> extends BaseMatcher<T> {
 		}
 	}
 
-	protected ConditionValue getValue(T cb, String column) throws NoSuchMethodException {
-		String capitalName = Character.toString(column.charAt(0)).toUpperCase() + column.substring(1);
-		ConditionQuery cq = cb.localCQ();
+	private ConditionValue getConditionValue(Object item, String column) {
+		try {
+			if (item instanceof ConditionBean){
+				return getValue(((ConditionBean) item).localCQ(), column);
+			} else if (item instanceof ConditionQuery) {
+				return getValue((ConditionQuery) item, column);
+			} else {
+				throw new IllegalArgumentException("Not a valid argument: " + item);
+			}
+		} catch (NoSuchMethodException e) {
+			throw new IllegalArgumentException("Column '" + column + "' does not exist.", e);
+		}
+	}
 
+	private ConditionValue getValue(ConditionQuery cq, String column) throws NoSuchMethodException {
+		String capitalName = Character.toString(column.charAt(0)).toUpperCase() + column.substring(1);
 		Method method;
 		try {
 			method = cq.getClass().getMethod("xdfget" + capitalName);
@@ -119,4 +126,5 @@ public class HasCondition<T extends ConditionBean> extends BaseMatcher<T> {
 	public static <T extends ConditionBean> HasCondition<T> hasCondition(String column, Matcher<?> matcher) {
 		return new HasCondition<T>(column, matcher);
 	}
+
 }
