@@ -15,6 +15,9 @@
  */
 package org.dbflute.testing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dbflute.bhv.readable.CBCall;
 import org.dbflute.cbean.ConditionBean;
 import org.dbflute.util.DfReflectionUtil;
@@ -25,7 +28,7 @@ import org.mockito.ArgumentCaptor;
  *
  * <p>
  * This captor captures Behavior's lambda argument by using an internal {@link ArgumentCaptor}.
- * When {@link #getCB()} was called, it creates a new <code>T</code> instance and applies lambda and then returns it.
+ * When {@link #getCB()} was called, it creates a new {@code CB} instance and applies lambda and then returns it.
  *
  * <p>
  * Example of capturing ConditionBean:
@@ -37,22 +40,22 @@ import org.mockito.ArgumentCaptor;
  * assertThat(cb, hasCondition("memberId", equal(1)));
  * </code></pre>
  *
- * @param <T> Type of ConditionBean implementation
+ * @param <CB> Type of ConditionBean implementation
  * @author taktos
  *
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class BehaviorArgumentCaptor<T extends ConditionBean> {
+public class BehaviorArgumentCaptor<CB extends ConditionBean> {
 
 	private final ArgumentCaptor<CBCall> captor;
-	private final Class<T> clazz;
+	private final Class<CB> clazz;
 
 	/**
-	 * Creates a new {@link BehaviorArgumentCaptor} of <code>clazz</code>.
+	 * Creates a new {@link BehaviorArgumentCaptor} of {@code clazz}.
 	 *
 	 * @param clazz Implementation class of ConditionBean
 	 */
-	public BehaviorArgumentCaptor(Class<T> clazz) {
+	public BehaviorArgumentCaptor(Class<CB> clazz) {
 		this.captor = ArgumentCaptor.forClass(CBCall.class);
 		this.clazz = clazz;
 	}
@@ -63,30 +66,51 @@ public class BehaviorArgumentCaptor<T extends ConditionBean> {
 	 * @return lambda argument captor
 	 * @see ArgumentCaptor#capture()
 	 */
-	public CBCall<T> capture() {
-		CBCall<T> callback = captor.capture();
-		return callback;
+	public CBCall<CB> capture() {
+		return captor.capture();
 	}
 
 	/**
-	 * Returns a new <code>T</code> instance that was applied lambda callback.
+	 * Returns a new {@code CB} instance that was applied lambda callback.
+	 * <p>
+	 * If verified method was called multiple times, this method returns the latest one.
+	 * If you want to get all ConditionBean, use {@link #getAllCB()} method instead.
 	 *
-	 * @return a new <code>T</code>
+	 * @return a new {@code CB}
+	 * @see #getAllCB()
+	 * @see ArgumentCaptor#getValue()
 	 */
-	public T getCB() {
-		T cb = (T) DfReflectionUtil.newInstance(clazz);
+	public CB getCB() {
+		CB cb = (CB) DfReflectionUtil.newInstance(clazz);
 		CBCall call = captor.getValue();
 		call.callback(cb);
 		return cb;
 	}
 
 	/**
-	 * Create a new {@link BehaviorArgumentCaptor} of <code>clazz</code>.
+	 * Returns new {@code CB} instances that were applied lambda callback.
+	 *
+	 * @return new {@code CB} instances.
+	 * @see ArgumentCaptor#getAllValues()
+	 */
+	public List<CB> getAllCB() {
+		List<CBCall> values = captor.getAllValues();
+		List<CB> cbs = new ArrayList<CB>(values.size());
+		for (CBCall callback : values) {
+			CB cb = (CB) DfReflectionUtil.newInstance(clazz);
+			callback.callback(cb);
+			cbs.add(cb);
+		}
+		return cbs;
+	}
+
+	/**
+	 * Create a new {@link BehaviorArgumentCaptor} of {@code clazz}.
 	 * @param clazz Class of ConditionBean implementation.
 	 * @return new captor
 	 */
-	public static <T extends ConditionBean> BehaviorArgumentCaptor<T> of(Class<T> clazz) {
-		return new BehaviorArgumentCaptor<T>(clazz);
+	public static <CB extends ConditionBean> BehaviorArgumentCaptor<CB> of(Class<CB> clazz) {
+		return new BehaviorArgumentCaptor<CB>(clazz);
 	}
 
 }
