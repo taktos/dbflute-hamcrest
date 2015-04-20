@@ -15,20 +15,16 @@
  */
 package org.dbflute.testing;
 
-import static org.dbflute.testing.cb.IsColumnExpressed.expressed;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.mockito.Matchers.argThat;
-
 import org.dbflute.bhv.readable.CBCall;
 import org.dbflute.cbean.ConditionBean;
-import org.dbflute.cbean.cvalue.ConditionValue;
 import org.dbflute.testing.cb.ComparisonOperator;
 import org.dbflute.testing.cb.HasCondition;
+import org.dbflute.testing.cb.HasRelation;
 import org.dbflute.testing.cb.IsColumnExpressed;
 import org.dbflute.testing.cb.IsColumnIsNotNull;
 import org.dbflute.testing.cb.IsColumnIsNull;
 import org.hamcrest.Matcher;
-import org.mockito.Matchers;
+import org.hamcrest.core.IsEqual;
 
 /**
  * Static factory of custom matchers.
@@ -54,10 +50,10 @@ public final class DBFluteMatchers {
 	 * @param cbclass class of ConditionBean implementation
 	 * @param matcher the matcher to apply to ConditionBean
 	 * @return <code>null</code>
-	 * @see Matchers#argThat(Matcher)
+	 * @see org.mockito.Matchers#argThat(Matcher)
 	 */
 	public static <T extends ConditionBean> CBCall<T> argCB(Class<T> cbclass, Matcher<T> matcher) {
-		return argThat(cb(cbclass, matcher));
+		return org.mockito.Matchers.argThat(cb(cbclass, matcher));
 	}
 
 	/**
@@ -71,13 +67,34 @@ public final class DBFluteMatchers {
 	}
 
 	/**
-	 * Creates a matcher that gets a {@link ConditionValue} of specified column
+	 * Creates a matcher that gets a {@link org.dbflute.cbean.cvalue.ConditionValue} of specified column
 	 * and pass it to subsequent matcher.
 	 * @param column the name of column which evaluates
-	 * @param matcher the matcher that evaluates {@link ConditionValue}
+	 * @param matcher the matcher that evaluates {@link org.dbflute.cbean.cvalue.ConditionValue}
 	 */
 	public static <T extends ConditionBean> HasCondition<T> hasCondition(String column, Matcher<?> matcher) {
 		return new HasCondition<T>(column, matcher);
+	}
+
+	/**
+	 * Creates a matcher that gets a {@link org.dbflute.cbean.ConditionQuery} of specified table
+	 * and pass it to subsequent matcher.
+	 * @param table the name of relating table which evaluates
+	 * @param hasCondition the matcher that evaluates {@link org.dbflute.cbean.ConditionQuery}
+	 */
+	public static <T extends ConditionBean> HasRelation<T> hasRelation(String table, HasCondition<T> hasCondition) {
+		return new HasRelation<T>(table, hasCondition);
+	}
+
+	/**
+	 * A shortcut to {@code hasRelation("table", hasCondition("column", ...))}.
+	 *
+	 * @param table the name of relating table
+	 * @param column the name of column which evaluates
+	 * @param matcher the matcher that evaluates {@link org.dbflute.cbean.cvalue.ConditionValue}
+	 */
+	public static <T extends ConditionBean> HasRelation<T> hasRelationCondition(String table, String column, Matcher<?> matcher) {
+		return new HasRelation<T>(table, new HasCondition<T>(column, matcher));
 	}
 
 	/**
@@ -92,7 +109,7 @@ public final class DBFluteMatchers {
 	 * @param matcher a matcher that evaluates the condition value
 	 */
 	public static IsColumnExpressed equal(Matcher<?> matcher) {
-		return expressed(ComparisonOperator.EQUAL, matcher);
+		return IsColumnExpressed.expressed(ComparisonOperator.EQUAL, matcher);
 	}
 
 	/**
@@ -105,7 +122,7 @@ public final class DBFluteMatchers {
 	 * @param value the value of condition
 	 */
 	public static IsColumnExpressed equal(Object value) {
-		return equal(equalTo(value));
+		return equal(IsEqual.equalTo(value));
 	}
 
 	/**
@@ -120,7 +137,7 @@ public final class DBFluteMatchers {
 	 * @param matcher a matcher that evaluates the condition value
 	 */
 	public static IsColumnExpressed greaterThan(Matcher<?> matcher) {
-		return expressed(ComparisonOperator.GREATER_THAN, matcher);
+		return IsColumnExpressed.expressed(ComparisonOperator.GREATER_THAN, matcher);
 	}
 
 	/**
@@ -133,7 +150,7 @@ public final class DBFluteMatchers {
 	 * @param value the value of condition
 	 */
 	public static IsColumnExpressed greaterThan(Object value) {
-		return greaterThan(equalTo(value));
+		return greaterThan(IsEqual.equalTo(value));
 	}
 
 	/**
@@ -148,7 +165,7 @@ public final class DBFluteMatchers {
 	 * @param matcher a matcher that evaluates the condition value
 	 */
 	public static IsColumnExpressed greaterEqual(Matcher<?> matcher) {
-		return expressed(ComparisonOperator.GREATER_EQUAL, matcher);
+		return IsColumnExpressed.expressed(ComparisonOperator.GREATER_EQUAL, matcher);
 	}
 
 	/**
@@ -161,7 +178,7 @@ public final class DBFluteMatchers {
 	 * @param value the value of condition
 	 */
 	public static IsColumnExpressed greaterEqual(Object value) {
-		return greaterEqual(equalTo(value));
+		return greaterEqual(IsEqual.equalTo(value));
 	}
 
 	/**
@@ -176,7 +193,7 @@ public final class DBFluteMatchers {
 	 * @param matcher a matcher that evaluates the condition value
 	 */
 	public static IsColumnExpressed lessThan(Matcher<?> matcher) {
-		return expressed(ComparisonOperator.LESS_THAN, matcher);
+		return IsColumnExpressed.expressed(ComparisonOperator.LESS_THAN, matcher);
 	}
 
 	/**
@@ -189,7 +206,7 @@ public final class DBFluteMatchers {
 	 * @param value the value of condition
 	 */
 	public static IsColumnExpressed lessThan(Object value) {
-		return lessThan(equalTo(value));
+		return lessThan(IsEqual.equalTo(value));
 	}
 
 	/**
@@ -204,7 +221,7 @@ public final class DBFluteMatchers {
 	 * @param matcher a matcher that evaluates the condition value
 	 */
 	public static IsColumnExpressed lessEqual(Matcher<?> matcher) {
-		return expressed(ComparisonOperator.LESS_EQUAL, matcher);
+		return IsColumnExpressed.expressed(ComparisonOperator.LESS_EQUAL, matcher);
 	}
 
 	/**
@@ -217,7 +234,7 @@ public final class DBFluteMatchers {
 	 * @param value the value of condition
 	 */
 	public static IsColumnExpressed lessEqual(Object value) {
-		return lessEqual(equalTo(value));
+		return lessEqual(IsEqual.equalTo(value));
 	}
 
 	/**
