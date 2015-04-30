@@ -23,6 +23,7 @@ import org.dbflute.testing.cb.HasRelation;
 import org.dbflute.testing.cb.IsColumnExpressed;
 import org.dbflute.testing.cb.IsColumnIsNotNull;
 import org.dbflute.testing.cb.IsColumnIsNull;
+import org.dbflute.testing.cb.ShouldSelect;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.IsEqual;
 
@@ -267,4 +268,24 @@ public final class DBFluteMatchers {
 		return new IsColumnIsNotNull();
 	}
 
+	/**
+	 * Creates a matcher that matches if the query selects the column.
+	 * To assert foreign table, join tables with '.' (dot).
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.specify().columnMemberName();
+	 * assertThat(cb, shouldSelect("memberName"));
+	 * 
+	 * cb.specify().specifyMemberStatus().columnMemberStatusName();
+	 * assertThat(cb, shouldSelect("memberStatus.memberStatusName"));
+	 * 
+	 * cb.specify().specifyMemberServiceAsOne().specifyServiceRank().columnServiceRankName();
+	 * // 'AsOne' can be omitted from table name
+	 * assertThat(cb, shouldSelect("memberService.serviceRank.serviceRankName"));
+	 * }</pre>
+	 * @param columnName the name of column
+	 */
+	public static <T extends ConditionBean> ShouldSelect<T> shouldSelect(String columnName) {
+		return ShouldSelect.shouldSelect(columnName);
+	}
 }
