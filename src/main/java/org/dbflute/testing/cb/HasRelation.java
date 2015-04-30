@@ -15,13 +15,13 @@
  */
 package org.dbflute.testing.cb;
 
-import java.lang.reflect.Method;
-
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.seasar.dbflute.cbean.ConditionBean;
 import org.seasar.dbflute.cbean.ConditionQuery;
-import org.seasar.dbflute.util.DfReflectionUtil;
+import org.seasar.dbflute.helper.beans.DfBeanDesc;
+import org.seasar.dbflute.helper.beans.exception.DfBeanPropertyNotFoundException;
+import org.seasar.dbflute.helper.beans.factory.DfBeanDescFactory;
 
 /**
  * The matcher that gets relation table condition from {@code T} for further assertion.
@@ -47,13 +47,15 @@ public class HasRelation<T extends ConditionBean> extends BaseMatcher<T> {
 		this.subsequent = subsequent;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean matches(Object item) {
+		if (item == null || !(item instanceof ConditionBean)) {
+			return false;
+		}
 		ConditionQuery cq;
 		try {
-			cq = getCQ((T) item, table);
-		} catch (NoSuchMethodException e) {
+			cq = getCQ((ConditionBean) item, table);
+		} catch (DfBeanPropertyNotFoundException e) {
 			throw new IllegalArgumentException("No relation table '" + table + "' found.", e);
 		}
 		return subsequent.matches(cq);
@@ -68,7 +70,7 @@ public class HasRelation<T extends ConditionBean> extends BaseMatcher<T> {
 	@Override
 	public void describeMismatch(Object item, Description description) {
 		description.appendText(table + ".");
-		subsequent.describeMismatch(item, description);
+		subsequent.describeMismatch(getCQ((ConditionBean) item, table), description);
 	}
 
 	/**
@@ -76,14 +78,12 @@ public class HasRelation<T extends ConditionBean> extends BaseMatcher<T> {
 	 * @param cb the instance of ConditionBean
 	 * @param table the name of relation table
 	 * @return query for {@code table}
-	 * @throws NoSuchMethodException no getter method for {@code table}
+	 * @throws DfBeanPropertyNotFoundException no getter method for {@code table}
 	 */
-	protected ConditionQuery getCQ(T cb, String table) throws NoSuchMethodException {
-		String capitalName = Character.toString(table.charAt(0)).toUpperCase() + table.substring(1);
+	protected ConditionQuery getCQ(ConditionBean cb, String table) {
 		ConditionQuery cq = cb.localCQ();
-
-		Method method = cq.getClass().getMethod("xdfgetConditionQuery" + capitalName);
-		return (ConditionQuery) DfReflectionUtil.invoke(method, cq, null);
+		DfBeanDesc beanDesc = DfBeanDescFactory.getBeanDesc(cq.getClass());
+		return (ConditionQuery) beanDesc.getPropertyDesc("conditionQuery" + table).getValue(cq);
 	}
 
 	public static <T extends ConditionBean> HasRelation<T> hasRelation(String table, HasCondition<T> relationCondition) {

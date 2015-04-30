@@ -15,7 +15,6 @@
  */
 package org.dbflute.testing.cb;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,9 @@ import org.hamcrest.Matcher;
 import org.seasar.dbflute.cbean.ConditionBean;
 import org.seasar.dbflute.cbean.ConditionQuery;
 import org.seasar.dbflute.cbean.cvalue.ConditionValue;
-import org.seasar.dbflute.util.DfReflectionUtil;
+import org.seasar.dbflute.helper.beans.DfBeanDesc;
+import org.seasar.dbflute.helper.beans.exception.DfBeanPropertyNotFoundException;
+import org.seasar.dbflute.helper.beans.factory.DfBeanDescFactory;
 
 /**
  * This is the matcher that gets one {@link ConditionValue} from {@code T}
@@ -102,30 +103,14 @@ public class HasCondition<T extends ConditionBean> extends BaseMatcher<T> {
 			} else {
 				throw new IllegalArgumentException("Not a valid argument: " + item);
 			}
-		} catch (NoSuchMethodException e) {
+		} catch (DfBeanPropertyNotFoundException e) {
 			throw new IllegalArgumentException("Column '" + column + "' does not exist.", e);
 		}
 	}
 
-	private ConditionValue getValue(ConditionQuery cq, String column) throws NoSuchMethodException {
-		String capitalName = Character.toString(column.charAt(0)).toUpperCase() + column.substring(1);
-		Method method;
-		try {
-			method = cq.getClass().getMethod("xdfget" + capitalName);
-		} catch (NoSuchMethodException e) {
-			// retry with old naming rule
-			try {
-				method = cq.getClass().getMethod("get" + capitalName);
-			} catch (NoSuchMethodException oe) {
-				// retry with another naming rule
-				try {
-					method = cq.getClass().getMethod("xget" + capitalName);
-				} catch (NoSuchMethodException xoe) {
-					throw e;
-				}
-			}
-		}
-		return (ConditionValue) DfReflectionUtil.invoke(method, cq, null);
+	private ConditionValue getValue(ConditionQuery cq, String column) {
+		DfBeanDesc beanDesc = DfBeanDescFactory.getBeanDesc(cq.getClass());
+		return (ConditionValue) beanDesc.getPropertyDesc(column).getValue(cq);
 	}
 
 	public static <T extends ConditionBean> HasCondition<T> hasCondition(String column, Matcher<?> matcher) {

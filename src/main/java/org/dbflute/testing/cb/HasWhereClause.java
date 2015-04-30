@@ -29,16 +29,15 @@ import org.seasar.dbflute.cbean.sqlclause.SqlClause;
  */
 public class HasWhereClause<T extends ConditionBean> extends BaseMatcher<T> {
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean matches(Object item) {
 		if (item instanceof ConditionBean) {
-			return hasWhereClause((T) item);
+			return hasWhereClause((ConditionBean) item);
 		}
 		return false;
 	}
 
-	protected boolean hasWhereClause(T cb) {
+	protected boolean hasWhereClause(ConditionBean cb) {
 		SqlClause sqlClause = cb.localCQ().xgetSqlClause();
 		return sqlClause.hasBaseTableInlineWhereClause()
 				|| sqlClause.hasOuterJoinInlineWhereClause()
