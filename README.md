@@ -11,6 +11,7 @@ Features
 ### ConditionBean Matchers
 
 - Assert query conditions
+    
     ```java
     import static org.dbflute.testing.DBFluteMatchers.*;
     ...
@@ -22,22 +23,27 @@ Features
     assertThat(cb, hasCondition("memberName", equal(startsWith("John"))));
     assertThat(cb, hasCondition("memberId", greaterThan(10)));
     ```
+    
 - Assert query conditions on joined table
-    '''java
+    
+    ```java
     MemberCB cb = ...;
     cb.query().queryMemberStatus().setMemberStatusName_Equal("ACT");
     cb.query().queryMemberServiceAsOne().queryServiceRank().setRankName_Equal("VIP");
     
     assertThat(cb, hasRelation("memberStatus", hasCondition("memberName", equal("ACT"))));
     assertThat(cb, hasRelation("memberService.serviceRank", hasCondition("rankName", equal("ACT"))));
-    '''
+    ```
+    
 - Assert column should select
+    
     ```java
     MemberCB cb = ...;
     cb.setupSelect_MemberStatus();
     assertThat(cb, shouldSelect("memberName"));
     assertThat(cb, shouldSelect("memberStatus.memberStatusName"));
     ```
+    
 
 - ArgumentMatcher for changing Behavior return value
     ```java
