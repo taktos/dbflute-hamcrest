@@ -22,8 +22,9 @@ import java.util.Map;
 import org.dbflute.cbean.ConditionBean;
 import org.dbflute.cbean.ConditionQuery;
 import org.dbflute.cbean.cvalue.ConditionValue;
+import org.dbflute.dbmeta.DBMeta;
+import org.dbflute.exception.DBMetaNotFoundException;
 import org.dbflute.helper.beans.DfBeanDesc;
-import org.dbflute.helper.beans.exception.DfBeanPropertyNotFoundException;
 import org.dbflute.helper.beans.factory.DfBeanDescFactory;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -103,14 +104,17 @@ public class HasCondition<T extends ConditionBean> extends BaseMatcher<T> {
             } else {
                 throw new IllegalArgumentException("Not a valid argument: " + item);
             }
-        } catch (DfBeanPropertyNotFoundException e) {
+        } catch (DBMetaNotFoundException e) {
             throw new IllegalArgumentException("Column '" + column + "' does not exist.", e);
         }
     }
 
     private ConditionValue getValue(ConditionQuery cq, String column) {
+        DBMeta meta = MatcherHelper.getDBMeta(cq);
+        String columnPropName = meta.findColumnInfo(column).getPropertyName();
+
         DfBeanDesc beanDesc = DfBeanDescFactory.getBeanDesc(cq.getClass());
-        return (ConditionValue) beanDesc.getPropertyDesc(column).getValue(cq);
+        return (ConditionValue) beanDesc.getPropertyDesc(columnPropName).getValue(cq);
     }
 
     public static <T extends ConditionBean> HasCondition<T> hasCondition(String column, Matcher<?> matcher) {

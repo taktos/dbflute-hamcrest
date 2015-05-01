@@ -15,8 +15,12 @@
  */
 package org.dbflute.testing.matcher;
 
+import java.util.Arrays;
+
 import org.dbflute.cbean.ConditionBean;
 import org.dbflute.cbean.ConditionQuery;
+import org.dbflute.dbmeta.DBMeta;
+import org.dbflute.exception.DBMetaNotFoundException;
 import org.dbflute.helper.beans.DfBeanDesc;
 import org.dbflute.helper.beans.exception.DfBeanPropertyNotFoundException;
 import org.dbflute.helper.beans.factory.DfBeanDescFactory;
@@ -52,10 +56,11 @@ public class HasRelation<T extends ConditionBean> extends BaseMatcher<T> {
         if (item == null || !(item instanceof ConditionBean)) {
             return false;
         }
+        String[] tables = table.split("\\.");
         ConditionQuery cq;
         try {
-            cq = getCQ((ConditionBean) item, table);
-        } catch (DfBeanPropertyNotFoundException e) {
+            cq = getCQ(((ConditionBean) item).localCQ(), tables);
+        } catch (DBMetaNotFoundException e) {
             throw new IllegalArgumentException("No relation table '" + table + "' found.", e);
         }
         return subsequent.matches(cq);
@@ -70,20 +75,25 @@ public class HasRelation<T extends ConditionBean> extends BaseMatcher<T> {
     @Override
     public void describeMismatch(Object item, Description description) {
         description.appendText(table + ".");
-        subsequent.describeMismatch(getCQ((ConditionBean) item, table), description);
+        subsequent.describeMismatch(getCQ(((ConditionBean) item).localCQ(), table.split("\\.")), description);
     }
 
     /**
      * Gets ConditionQuery for related table {@code table}.
-     * @param cb the instance of ConditionBean
-     * @param table the name of relation table
+     * @param cq the instance of ConditionQuery
+     * @param tables names of relation tables
      * @return query for {@code table}
      * @throws DfBeanPropertyNotFoundException no getter method for {@code table}
      */
-    protected ConditionQuery getCQ(ConditionBean cb, String table) {
-        ConditionQuery cq = cb.localCQ();
+    protected ConditionQuery getCQ(ConditionQuery cq, String[] tables) {
+        DBMeta meta = MatcherHelper.getDBMeta(cq);
+        String foreignPropertyName = meta.findForeignInfo(tables[0]).getForeignPropertyName();
         DfBeanDesc beanDesc = DfBeanDescFactory.getBeanDesc(cq.getClass());
-        return (ConditionQuery) beanDesc.getPropertyDesc("conditionQuery" + table).getValue(cq);
+        ConditionQuery nested = (ConditionQuery) beanDesc.getPropertyDesc("conditionQuery" + foreignPropertyName).getValue(cq);
+        if (tables.length == 1) {
+            return nested;
+        }
+        return getCQ(nested, Arrays.copyOfRange(tables, 1, tables.length));
     }
 
     public static <T extends ConditionBean> HasRelation<T> hasRelation(String table, HasCondition<T> relationCondition) {
