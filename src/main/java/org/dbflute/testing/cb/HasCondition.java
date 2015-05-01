@@ -47,74 +47,74 @@ import org.hamcrest.Matcher;
  */
 public class HasCondition<T extends ConditionBean> extends BaseMatcher<T> {
 
-	protected final String column;
-	protected final Matcher<?> matcher;
+    protected final String column;
+    protected final Matcher<?> matcher;
 
-	public HasCondition(String column, Matcher<?> matcher) {
-		this.column = column;
-		this.matcher = matcher;
-	}
+    public HasCondition(String column, Matcher<?> matcher) {
+        this.column = column;
+        this.matcher = matcher;
+    }
 
-	@Override
-	public boolean matches(Object item) {
-		if (item == null) {
-			return false;
-		}
-		ConditionValue cv = getConditionValue(item, column);
-		return matcher.matches(cv);
-	}
+    @Override
+    public boolean matches(Object item) {
+        if (item == null) {
+            return false;
+        }
+        ConditionValue cv = getConditionValue(item, column);
+        return matcher.matches(cv);
+    }
 
-	@Override
-	public void describeTo(Description description) {
-		description.appendText(column + " ");
-		description.appendDescriptionOf(matcher);
-	}
+    @Override
+    public void describeTo(Description description) {
+        description.appendText(column + " ");
+        description.appendDescriptionOf(matcher);
+    }
 
-	@Override
-	public void describeMismatch(Object item, Description description) {
-		description.appendText(column + " ");
-		ConditionValue cv = getConditionValue(item, column);
-		matcher.describeMismatch(cv, description);
+    @Override
+    public void describeMismatch(Object item, Description description) {
+        description.appendText(column + " ");
+        ConditionValue cv = getConditionValue(item, column);
+        matcher.describeMismatch(cv, description);
 
-		List<String> values = new ArrayList<String>();
-		flatten(cv.getFixed(), values);
-		flatten(cv.getVarying(), values);
+        List<String> values = new ArrayList<String>();
+        flatten(cv.getFixed(), values);
+        flatten(cv.getVarying(), values);
 
-		description.appendValueList(". (Actual condition(s): ", ", ", ")", values);
-	}
+        description.appendValueList(". (Actual condition(s): ", ", ", ")", values);
+    }
 
-	private void flatten(Map<String, Map<String, Object>> map, List<String> flatten) {
-		if (map == null) {
-			return;
-		}
-		for (Map<String, Object> v : map.values()) {
-			for (Map.Entry<String, Object> e : v.entrySet()) {
-				flatten.add(e.getKey() + " " + e.getValue());
-			}
-		}
-	}
+    private void flatten(Map<String, Map<String, Object>> map, List<String> flatten) {
+        if (map == null) {
+            return;
+        }
+        for (Map<String, Object> v : map.values()) {
+            for (Map.Entry<String, Object> e : v.entrySet()) {
+                flatten.add(e.getKey() + " " + e.getValue());
+            }
+        }
+    }
 
-	private ConditionValue getConditionValue(Object item, String column) {
-		try {
-			if (item instanceof ConditionBean){
-				return getValue(((ConditionBean) item).localCQ(), column);
-			} else if (item instanceof ConditionQuery) {
-				return getValue((ConditionQuery) item, column);
-			} else {
-				throw new IllegalArgumentException("Not a valid argument: " + item);
-			}
-		} catch (DfBeanPropertyNotFoundException e) {
-			throw new IllegalArgumentException("Column '" + column + "' does not exist.", e);
-		}
-	}
+    private ConditionValue getConditionValue(Object item, String column) {
+        try {
+            if (item instanceof ConditionBean) {
+                return getValue(((ConditionBean) item).localCQ(), column);
+            } else if (item instanceof ConditionQuery) {
+                return getValue((ConditionQuery) item, column);
+            } else {
+                throw new IllegalArgumentException("Not a valid argument: " + item);
+            }
+        } catch (DfBeanPropertyNotFoundException e) {
+            throw new IllegalArgumentException("Column '" + column + "' does not exist.", e);
+        }
+    }
 
-	private ConditionValue getValue(ConditionQuery cq, String column) {
-		DfBeanDesc beanDesc = DfBeanDescFactory.getBeanDesc(cq.getClass());
-		return (ConditionValue) beanDesc.getPropertyDesc(column).getValue(cq);
-	}
+    private ConditionValue getValue(ConditionQuery cq, String column) {
+        DfBeanDesc beanDesc = DfBeanDescFactory.getBeanDesc(cq.getClass());
+        return (ConditionValue) beanDesc.getPropertyDesc(column).getValue(cq);
+    }
 
-	public static <T extends ConditionBean> HasCondition<T> hasCondition(String column, Matcher<?> matcher) {
-		return new HasCondition<T>(column, matcher);
-	}
+    public static <T extends ConditionBean> HasCondition<T> hasCondition(String column, Matcher<?> matcher) {
+        return new HasCondition<T>(column, matcher);
+    }
 
 }

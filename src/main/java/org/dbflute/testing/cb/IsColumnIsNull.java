@@ -26,20 +26,20 @@ import org.hamcrest.Description;
  */
 public class IsColumnIsNull extends BaseMatcher<ConditionValue> {
 
-	@Override
-	public boolean matches(Object item) {
-		ConditionValue cv = (ConditionValue) item;
-		return cv.hasIsNull();
-	}
+    @Override
+    public boolean matches(Object item) {
+        ConditionValue cv = (ConditionValue) item;
+        return cv.hasIsNull();
+    }
 
-	@Override
-	public void describeTo(Description description) {
-		description.appendText("is null");
-	}
+    @Override
+    public void describeTo(Description description) {
+        description.appendText("is null");
+    }
 
-	@Override
-	public void describeMismatch(Object item, Description description) {
-		description.appendText("has no IS_NULL condition");
-	}
+    @Override
+    public void describeMismatch(Object item, Description description) {
+        description.appendText("has no IS_NULL condition");
+    }
 
 }

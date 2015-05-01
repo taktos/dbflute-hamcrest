@@ -29,27 +29,26 @@ import org.hamcrest.Matcher;
  */
 public class HasWhereClause<T extends ConditionBean> extends BaseMatcher<T> {
 
-	@Override
-	public boolean matches(Object item) {
-		if (item instanceof ConditionBean) {
-			return hasWhereClause((ConditionBean) item);
-		}
-		return false;
-	}
+    @Override
+    public boolean matches(Object item) {
+        if (item instanceof ConditionBean) {
+            return hasWhereClause((ConditionBean) item);
+        }
+        return false;
+    }
 
-	protected boolean hasWhereClause(ConditionBean cb) {
-		SqlClause sqlClause = cb.localCQ().xgetSqlClause();
-		return sqlClause.hasBaseTableInlineWhereClause()
-				|| sqlClause.hasOuterJoinInlineWhereClause()
-				|| sqlClause.hasWhereClauseOnBaseQuery();
-	}
+    protected boolean hasWhereClause(ConditionBean cb) {
+        SqlClause sqlClause = cb.localCQ().xgetSqlClause();
+        return sqlClause.hasBaseTableInlineWhereClause() || sqlClause.hasOuterJoinInlineWhereClause()
+                || sqlClause.hasWhereClauseOnBaseQuery();
+    }
 
-	@Override
-	public void describeTo(Description description) {
-		description.appendText("any where clause");
-	}
+    @Override
+    public void describeTo(Description description) {
+        description.appendText("any where clause");
+    }
 
-	public static <T extends ConditionBean> Matcher<T> hasWhereClause() {
-		return new HasWhereClause<T>();
-	}
+    public static <T extends ConditionBean> Matcher<T> hasWhereClause() {
+        return new HasWhereClause<T>();
+    }
 }

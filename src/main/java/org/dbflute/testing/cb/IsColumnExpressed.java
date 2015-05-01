@@ -33,40 +33,40 @@ import org.hamcrest.Matcher;
  */
 public class IsColumnExpressed extends BaseMatcher<ConditionValue> {
 
-	private final ComparisonOperator operator;
-	private final Matcher<?> valueMatcher;
+    private final ComparisonOperator operator;
+    private final Matcher<?> valueMatcher;
 
-	public IsColumnExpressed(ComparisonOperator operator, Matcher<?> matcher) {
-		this.operator = operator;
-		this.valueMatcher = matcher;
-	}
+    public IsColumnExpressed(ComparisonOperator operator, Matcher<?> matcher) {
+        this.operator = operator;
+        this.valueMatcher = matcher;
+    }
 
-	@Override
-	public boolean matches(Object item) {
-		ConditionValue cv = (ConditionValue) item;
-		Object value = operator.getValue(cv);
-		return valueMatcher.matches(value);
-	}
+    @Override
+    public boolean matches(Object item) {
+        ConditionValue cv = (ConditionValue) item;
+        Object value = operator.getValue(cv);
+        return valueMatcher.matches(value);
+    }
 
-	@Override
-	public void describeTo(Description description) {
-		description.appendText(operator.sign()).appendText(" ");
-		description.appendDescriptionOf(valueMatcher);
-	}
+    @Override
+    public void describeTo(Description description) {
+        description.appendText(operator.sign()).appendText(" ");
+        description.appendDescriptionOf(valueMatcher);
+    }
 
-	@Override
-	public void describeMismatch(Object item, Description description) {
-		Object value;
-		try {
-			value = operator.getValue((ConditionValue) item);
-		} catch (RuntimeException e) {
-			description.appendText("has no ").appendText(operator.name()).appendText(" condition");
-			return;
-		}
-		valueMatcher.describeMismatch(value, description);
-	}
+    @Override
+    public void describeMismatch(Object item, Description description) {
+        Object value;
+        try {
+            value = operator.getValue((ConditionValue) item);
+        } catch (RuntimeException e) {
+            description.appendText("has no ").appendText(operator.name()).appendText(" condition");
+            return;
+        }
+        valueMatcher.describeMismatch(value, description);
+    }
 
-	public static IsColumnExpressed expressed(ComparisonOperator operator, Matcher<?> valueMatcher) {
-		return new IsColumnExpressed(operator, valueMatcher);
-	}
+    public static IsColumnExpressed expressed(ComparisonOperator operator, Matcher<?> valueMatcher) {
+        return new IsColumnExpressed(operator, valueMatcher);
+    }
 }

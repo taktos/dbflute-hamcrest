@@ -59,53 +59,53 @@ import org.mockito.ArgumentMatcher;
  */
 public class BehaviorArgumentMatcher<T extends ConditionBean> extends BaseMatcher<CBCall<T>> {
 
-	private final Class<T> clazz;
-	private final Matcher<T> matcher;
+    private final Class<T> clazz;
+    private final Matcher<T> matcher;
 
-	private T cb;
+    private T cb;
 
-	/**
-	 * Creates a new instance that evaluates <code>cbclass</code> argument with <code>matcher</code>.
-	 * @param cbclass Class instance of ConditionBean implementation
-	 * @param matcher Matcher to evaluate ConditionBean conditions
-	 */
-	public BehaviorArgumentMatcher(Class<T> cbclass, Matcher<T> matcher) {
-		this.clazz = cbclass;
-		this.matcher = matcher;
-	}
+    /**
+     * Creates a new instance that evaluates <code>cbclass</code> argument with <code>matcher</code>.
+     * @param cbclass Class instance of ConditionBean implementation
+     * @param matcher Matcher to evaluate ConditionBean conditions
+     */
+    public BehaviorArgumentMatcher(Class<T> cbclass, Matcher<T> matcher) {
+        this.clazz = cbclass;
+        this.matcher = matcher;
+    }
 
-	/**
-	 * Creates a new {@code T} instance by reflection and pass it to subsequent matcher.
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean matches(Object item) {
-		if (item == null) {
-			return false;
-		}
-		T cb = (T) DfReflectionUtil.newInstance(clazz);
-		CBCall<T> callback = (CBCall<T>) item;
-		callback.callback(cb);
-		// store cb for mismatch
-		this.cb = cb;
+    /**
+     * Creates a new {@code T} instance by reflection and pass it to subsequent matcher.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean matches(Object item) {
+        if (item == null) {
+            return false;
+        }
+        T cb = (T) DfReflectionUtil.newInstance(clazz);
+        CBCall<T> callback = (CBCall<T>) item;
+        callback.callback(cb);
+        // store cb for mismatch
+        this.cb = cb;
 
-		return matcher.matches(cb);
-	}
+        return matcher.matches(cb);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void describeTo(Description description) {
-		description.appendDescriptionOf(matcher);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void describeTo(Description description) {
+        description.appendDescriptionOf(matcher);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void describeMismatch(Object item, Description description) {
-		matcher.describeMismatch(cb, description);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void describeMismatch(Object item, Description description) {
+        matcher.describeMismatch(cb, description);
+    }
 
 }
