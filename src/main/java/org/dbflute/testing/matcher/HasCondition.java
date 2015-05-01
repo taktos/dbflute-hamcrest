@@ -25,8 +25,9 @@ import org.hamcrest.Matcher;
 import org.seasar.dbflute.cbean.ConditionBean;
 import org.seasar.dbflute.cbean.ConditionQuery;
 import org.seasar.dbflute.cbean.cvalue.ConditionValue;
+import org.seasar.dbflute.dbmeta.DBMeta;
+import org.seasar.dbflute.exception.DBMetaNotFoundException;
 import org.seasar.dbflute.helper.beans.DfBeanDesc;
-import org.seasar.dbflute.helper.beans.exception.DfBeanPropertyNotFoundException;
 import org.seasar.dbflute.helper.beans.factory.DfBeanDescFactory;
 
 /**
@@ -103,14 +104,17 @@ public class HasCondition<T extends ConditionBean> extends BaseMatcher<T> {
             } else {
                 throw new IllegalArgumentException("Not a valid argument: " + item);
             }
-        } catch (DfBeanPropertyNotFoundException e) {
+        } catch (DBMetaNotFoundException e) {
             throw new IllegalArgumentException("Column '" + column + "' does not exist.", e);
         }
     }
 
     private ConditionValue getValue(ConditionQuery cq, String column) {
+        DBMeta meta = MatcherHelper.getDBMeta(cq);
+        String columnPropName = meta.findColumnInfo(column).getPropertyName();
+
         DfBeanDesc beanDesc = DfBeanDescFactory.getBeanDesc(cq.getClass());
-        return (ConditionValue) beanDesc.getPropertyDesc(column).getValue(cq);
+        return (ConditionValue) beanDesc.getPropertyDesc(columnPropName).getValue(cq);
     }
 
     public static <T extends ConditionBean> HasCondition<T> hasCondition(String column, Matcher<?> matcher) {
