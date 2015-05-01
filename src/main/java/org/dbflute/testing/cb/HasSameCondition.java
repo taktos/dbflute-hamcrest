@@ -29,27 +29,27 @@ import org.seasar.dbflute.cbean.ConditionBean;
  */
 public class HasSameCondition<T extends ConditionBean> extends BaseMatcher<T> {
 
-	private final T cb;
+    private final T cb;
 
-	public HasSameCondition(T cb) {
-		this.cb = cb;
-	}
+    public HasSameCondition(T cb) {
+        this.cb = cb;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean matches(Object item) {
-		return cb.toDisplaySql().equals(((T) item).toDisplaySql());
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean matches(Object item) {
+        return cb.toDisplaySql().equals(((T) item).toDisplaySql());
+    }
 
-	@Override
-	public void describeTo(Description description) {
-		description.appendValue(cb.toDisplaySql());
-	}
+    @Override
+    public void describeTo(Description description) {
+        description.appendValue(cb.toDisplaySql());
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void describeMismatch(Object item, Description description) {
-		description.appendValue(((T) item).toDisplaySql());
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public void describeMismatch(Object item, Description description) {
+        description.appendValue(((T) item).toDisplaySql());
+    }
 
 }
