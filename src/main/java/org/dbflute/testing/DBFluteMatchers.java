@@ -25,8 +25,7 @@ import org.dbflute.testing.cb.IsColumnIsNotNull;
 import org.dbflute.testing.cb.IsColumnIsNull;
 import org.dbflute.testing.cb.ShouldSelect;
 import org.hamcrest.Matcher;
-import org.hamcrest.collection.IsIterableContainingInAnyOrder;
-import org.hamcrest.collection.IsIterableContainingInOrder;
+import org.hamcrest.core.IsCollectionContaining;
 import org.hamcrest.core.IsEqual;
 
 /**
@@ -255,7 +254,7 @@ public final class DBFluteMatchers {
 	}
 
 	/**
-	 * A shortcut to {@code in(contains(items))}.
+	 * A shortcut to {@code in(hasItems(items))}.
 	 * <p>Example:
 	 * <pre>{@code
 	 * cb.query().setMemberName_InScope(Arrays.asList("John Doe", "Jane Doe"));
@@ -264,15 +263,7 @@ public final class DBFluteMatchers {
 	 * @param items the value of condition
 	 */
 	public static IsColumnExpressed in(Object... items) {
-		return in(IsIterableContainingInOrder.contains(items));
-	}
-
-	/**
-	 * A shortcut to {@code in(containsInAnyOrder(items))}.
-	 * @param items the value of condition
-	 */
-	public static IsColumnExpressed inAnyOrder(Object... items) {
-		return in(IsIterableContainingInAnyOrder.containsInAnyOrder(items));
+		return in(IsCollectionContaining.hasItems(items));
 	}
 
 	/**
@@ -299,15 +290,7 @@ public final class DBFluteMatchers {
 	 * @param items the value of condition
 	 */
 	public static IsColumnExpressed notIn(Object... items) {
-		return notIn(IsIterableContainingInOrder.contains(items));
-	}
-
-	/**
-	 * A shortcut to {@code notIn(containsInAnyOrder(items))}.
-	 * @param items the value of condition
-	 */
-	public static IsColumnExpressed notInAnyOrder(Object... items) {
-		return notIn(IsIterableContainingInAnyOrder.containsInAnyOrder(items));
+		return notIn(IsCollectionContaining.hasItems(items));
 	}
 
 	/**
