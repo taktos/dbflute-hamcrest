@@ -79,7 +79,6 @@ public class AccessContextInitializer implements TestRule {
      * {@code timestamp} is parsed flexibly by DfTypeUtil.
      * @param user the name of current user
      * @param timestamp the timestamp string 'yyyy-MM-dd HH:mm:ss.SSS'
-     * @see org.dbflute.util.DfTypeUtil#toTimestamp(Object)
      */
     public AccessContextInitializer(String user, String timestamp) {
         this(user, timestamp, "");

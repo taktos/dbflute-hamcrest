@@ -13,43 +13,33 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.dbflute.testing.cb;
+package org.dbflute.testing.matcher;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.seasar.dbflute.cbean.ConditionBean;
+import org.seasar.dbflute.cbean.cvalue.ConditionValue;
 
 /**
- * Matches when the argument has same conditions.
- * It compares whole SQL by {@link ConditionBean#toDisplaySql()}.
- *
- * @param <T> the type of ConditionBean implementation
+ * Mathces when the column has is null condition.
  * @author taktos
  *
  */
-public class HasSameCondition<T extends ConditionBean> extends BaseMatcher<T> {
+public class IsColumnIsNull extends BaseMatcher<ConditionValue> {
 
-    private final T cb;
-
-    public HasSameCondition(T cb) {
-        this.cb = cb;
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
     public boolean matches(Object item) {
-        return cb.toDisplaySql().equals(((T) item).toDisplaySql());
+        ConditionValue cv = (ConditionValue) item;
+        return cv.hasIsNull();
     }
 
     @Override
     public void describeTo(Description description) {
-        description.appendValue(cb.toDisplaySql());
+        description.appendText("is null");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void describeMismatch(Object item, Description description) {
-        description.appendValue(((T) item).toDisplaySql());
+        description.appendText("has no IS_NULL condition");
     }
 
 }
