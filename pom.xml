@@ -10,6 +10,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<dbflute.version>1.1.0-sp2</dbflute.version>
+		<junit.version>4.12</junit.version>
 		<hamcrest.version>2.0.0.0</hamcrest.version>
 		<mockito.version>2.0.5-beta</mockito.version>
 	</properties>
@@ -38,6 +39,17 @@
 				<version>${dbflute.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.hamcrest</groupId>
+						<artifactId>hamcrest-core</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
 				<groupId>org.hamcrest</groupId>
 				<artifactId>java-hamcrest</artifactId>
 				<version>${hamcrest.version}</version>
@@ -60,6 +72,11 @@
 		<dependency>
 			<groupId>org.dbflute</groupId>
 			<artifactId>dbflute-runtime</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
