@@ -127,6 +127,34 @@ public final class DBFluteMatchers {
 
     /**
      * Creates a matcher that matches when the examined column has
+     * NOT_EQUAL condition with value matched with the specified {@code matcher}.
+     * <p>Example:
+     * <pre>{@code
+     * cb.query.setMemberName_NotEqual("John Doe");
+     * assertThat(cb, hasCondition("memberName", notEqual(startsWith("J"))));
+     * }</pre>
+     *
+     * @param matcher a matcher that evaluates the condition value
+     */
+    public static IsColumnExpressed notEqual(Matcher<?> matcher) {
+        return IsColumnExpressed.expressed(ComparisonOperator.NOT_EQUAL, matcher);
+    }
+
+    /**
+     * A shortcut to {@code notEqual(equalTo(value))}.
+     * <p>Example:
+     * <pre>{@code
+     * cb.query().setMemberId_NotEqual(10);
+     * assertThat(cb, hasCondition("memberId", notEqual(10)));
+     * }
+     * @param value the value of condition
+     */
+    public static IsColumnExpressed notEqual(Object value) {
+        return notEqual(IsEqual.equalTo(value));
+    }
+
+    /**
+     * Creates a matcher that matches when the examined column has
      * GREATER_THAN condition with value matched with the specified {@code matcher}.
      * <p>Example:
      * <pre>{@code
