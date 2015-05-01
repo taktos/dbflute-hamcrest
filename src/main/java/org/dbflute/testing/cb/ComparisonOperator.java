@@ -15,6 +15,12 @@
  */
 package org.dbflute.testing.cb;
 
+import java.lang.reflect.Method;
+import java.util.Map;
+
+import org.seasar.dbflute.cbean.cvalue.ConditionValue;
+import org.seasar.dbflute.util.DfReflectionUtil;
+
 /**
  * Operators of SQL comparison.
  *
@@ -23,35 +29,105 @@ package org.dbflute.testing.cb;
  */
 public enum ComparisonOperator {
 
-	EQUAL("=", "getEqualValueHandler"),
-	NOT_EQUAL("<>", "getNotEqualValueHandler"),
-	GREATER_THAN(">", "getGreaterThanValueHandler"),
-	GREATER_EQUAL(">=", "getGreaterEqualValueHandler"),
-	LESS_THAN("<", "getLessThanValueHandler"),
-	LESS_EQUAL("<=", "getLessEqualValueHandler"),
+	EQUAL("=") {
+		@Override
+		public Object getValue(ConditionValue cv) {
+			return getFixedValue(cv, "getEqualValueHandler");
+		}
+	},
+	NOT_EQUAL("<>") {
+		@Override
+		public Object getValue(ConditionValue cv) {
+			return getFixedValue(cv, "getNotEqualValueHandler");
+		}
+	},
+	GREATER_THAN(">") {
+		@Override
+		public Object getValue(ConditionValue cv) {
+			return getFixedValue(cv, "getGreaterThanValueHandler");
+		}
+	},
+	GREATER_EQUAL(">=") {
+		@Override
+		public Object getValue(ConditionValue cv) {
+			return getFixedValue(cv, "getGreaterEqualValueHandler");
+		}
+	},
+	LESS_THAN("<") {
+		@Override
+		public Object getValue(ConditionValue cv) {
+			return getFixedValue(cv, "getLessThanValueHandler");
+		}
+	},
+	LESS_EQUAL("<=") {
+		@Override
+		public Object getValue(ConditionValue cv) {
+			return getFixedValue(cv, "getLessEqualValueHandler");
+		}
+	},
 
-	IN("in", "getInScopeValueHandler"),
-	NOT_IN("not in", "getNotInScopeValueHandler"),
-	LIKE("like", "getLikeSearchValueHandler"),
-	NOT_LIKE("not like", "getNotLikeSearchValueHandler"),
-	IS_NULL("is null", "getIsNullValueHandler"),
-	IS_NOT_NULL("is not null", "getIsNotNullValueHandler")
+	IN("in") {
+		@Override
+		public Object getValue(ConditionValue cv) {
+			return getVaryingValue(cv, "inScope");
+		}
+	},
+	NOT_IN("not in") {
+		@Override
+		public Object getValue(ConditionValue cv) {
+			return getVaryingValue(cv, "notInScope");
+		}
+	},
+	LIKE("like") {
+		@Override
+		public Object getValue(ConditionValue cv) {
+			return getVaryingValue(cv, "likeSearch");
+		}
+	},
+	NOT_LIKE("not like") {
+		@Override
+		public Object getValue(ConditionValue cv) {
+			return getVaryingValue(cv, "notLikeSearch");
+		}
+	},
+	IS_NULL("is null") {
+		@Override
+		public Object getValue(ConditionValue cv) {
+			return cv.hasIsNull();
+		}
+	},
+	IS_NOT_NULL("is not null") {
+		@Override
+		public Object getValue(ConditionValue cv) {
+			return cv.hasIsNotNull();
+		}
+	}
 	;
 
 	private final String operator;
-	private final String getterName;
 
-	private ComparisonOperator(String operator, String getter) {
+	private ComparisonOperator(String operator) {
 		this.operator = operator;
-		this.getterName = getter;
 	}
 
 	public String sign() {
 		return operator;
 	}
 
-	public String getGetterName() {
-		return getterName;
+	public abstract Object getValue(ConditionValue cv);
+
+	protected Object getFixedValue(ConditionValue cv, String getterName) {
+		Method method = DfReflectionUtil.getAccessibleMethod(cv.getClass(), getterName, null);
+		Object valueHandler = DfReflectionUtil.invokeForcedly(method, cv, null);
+		Method getter = DfReflectionUtil.getAccessibleMethod(valueHandler.getClass(), "getValue", null);
+		return DfReflectionUtil.invoke(getter, valueHandler, null);
 	}
 
+	protected Object getVaryingValue(ConditionValue cv, String type) {
+		Map<String, Map<String, Object>> varying = cv.getVarying();
+		if (varying == null || !varying.containsKey(type)) {
+			return null;
+		}
+		return varying.get(type).values().iterator().next();
+	}
 }
