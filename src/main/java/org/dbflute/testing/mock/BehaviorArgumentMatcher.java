@@ -13,10 +13,11 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.dbflute.testing;
+package org.dbflute.testing.mock;
 
 import org.dbflute.bhv.readable.CBCall;
 import org.dbflute.cbean.ConditionBean;
+import org.dbflute.testing.DBFluteMatchers;
 import org.dbflute.util.DfReflectionUtil;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;

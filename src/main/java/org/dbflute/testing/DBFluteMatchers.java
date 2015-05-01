@@ -17,13 +17,15 @@ package org.dbflute.testing;
 
 import org.dbflute.bhv.readable.CBCall;
 import org.dbflute.cbean.ConditionBean;
-import org.dbflute.testing.cb.ComparisonOperator;
-import org.dbflute.testing.cb.HasCondition;
-import org.dbflute.testing.cb.HasRelation;
-import org.dbflute.testing.cb.IsColumnExpressed;
-import org.dbflute.testing.cb.IsColumnIsNotNull;
-import org.dbflute.testing.cb.IsColumnIsNull;
-import org.dbflute.testing.cb.ShouldSelect;
+import org.dbflute.testing.matcher.ComparisonOperator;
+import org.dbflute.testing.matcher.HasCondition;
+import org.dbflute.testing.matcher.HasRelation;
+import org.dbflute.testing.matcher.IsColumnExpressed;
+import org.dbflute.testing.matcher.IsColumnIsNotNull;
+import org.dbflute.testing.matcher.IsColumnIsNull;
+import org.dbflute.testing.matcher.ShouldSelect;
+import org.dbflute.testing.mock.BehaviorArgumentCaptor;
+import org.dbflute.testing.mock.BehaviorArgumentMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.IsCollectionContaining;
 import org.hamcrest.core.IsEqual;
@@ -434,8 +436,6 @@ public final class DBFluteMatchers {
      * cb.query.setMemberName_IsNull();
      * assertThat(cb, hasCondition("memberName", isNull()));
      * }</pre>
-     *
-     * @param matcher a matcher that evaluates the condition value
      */
     public static IsColumnIsNull isNull() {
         return new IsColumnIsNull();
@@ -449,8 +449,6 @@ public final class DBFluteMatchers {
      * cb.query.setMemberName_IsNotNull();
      * assertThat(cb, hasCondition("memberName", isNotNull()));
      * }</pre>
-     *
-     * @param matcher a matcher that evaluates the condition value
      */
     public static IsColumnIsNotNull isNotNull() {
         return new IsColumnIsNotNull();
