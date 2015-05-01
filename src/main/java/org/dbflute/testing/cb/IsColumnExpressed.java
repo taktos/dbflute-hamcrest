@@ -15,10 +15,7 @@
  */
 package org.dbflute.testing.cb;
 
-import java.lang.reflect.Method;
-
 import org.dbflute.cbean.cvalue.ConditionValue;
-import org.dbflute.util.DfReflectionUtil;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -47,8 +44,7 @@ public class IsColumnExpressed extends BaseMatcher<ConditionValue> {
 	@Override
 	public boolean matches(Object item) {
 		ConditionValue cv = (ConditionValue) item;
-		Object value;
-			value = getValue(cv);
+		Object value = operator.getValue(cv);
 		return valueMatcher.matches(value);
 	}
 
@@ -62,20 +58,12 @@ public class IsColumnExpressed extends BaseMatcher<ConditionValue> {
 	public void describeMismatch(Object item, Description description) {
 		Object value;
 		try {
-			value = getValue((ConditionValue) item);
+			value = operator.getValue((ConditionValue) item);
 		} catch (RuntimeException e) {
 			description.appendText("has no ").appendText(operator.name()).appendText(" condition");
 			return;
 		}
 		valueMatcher.describeMismatch(value, description);
-	}
-
-	protected Object getValue(ConditionValue cv) {
-		Method method = DfReflectionUtil.getAccessibleMethod(cv.getClass(), operator.getGetterName(), null);
-		method.setAccessible(true);
-		Object valueHandler = DfReflectionUtil.invoke(method, cv, null);
-		Method getter = DfReflectionUtil.getAccessibleMethod(valueHandler.getClass(), "getValue", null);
-		return DfReflectionUtil.invoke(getter, valueHandler, null);
 	}
 
 	public static IsColumnExpressed expressed(ComparisonOperator operator, Matcher<?> valueMatcher) {

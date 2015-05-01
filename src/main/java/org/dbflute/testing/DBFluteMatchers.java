@@ -25,6 +25,8 @@ import org.dbflute.testing.cb.IsColumnIsNotNull;
 import org.dbflute.testing.cb.IsColumnIsNull;
 import org.dbflute.testing.cb.ShouldSelect;
 import org.hamcrest.Matcher;
+import org.hamcrest.collection.IsIterableContainingInAnyOrder;
+import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.hamcrest.core.IsEqual;
 
 /**
@@ -236,6 +238,208 @@ public final class DBFluteMatchers {
 	 */
 	public static IsColumnExpressed lessEqual(Object value) {
 		return lessEqual(IsEqual.equalTo(value));
+	}
+
+	/**
+	 * Creates a matcher that matches when the examined column has
+	 * IN condition with value matched with the specified {@code matcher}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_InScope(Arrays.asList("John Doe", "Jane Doe"));
+	 * assertThat(cb, hasCondition("memberName", in(contains("John Doe", "Jane Doe"))));
+	 * }</pre>
+	 * @param matcher a matcher that evaluates the condition value
+	 */
+	public static IsColumnExpressed in(Matcher<?> matcher) {
+		return IsColumnExpressed.expressed(ComparisonOperator.IN, matcher);
+	}
+
+	/**
+	 * A shortcut to {@code in(contains(items))}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_InScope(Arrays.asList("John Doe", "Jane Doe"));
+	 * assertThat(cb, hasCondition("memberName", in("John Doe", "Jane Doe")));
+	 * }</pre>
+	 * @param items the value of condition
+	 */
+	public static IsColumnExpressed in(Object... items) {
+		return in(IsIterableContainingInOrder.contains(items));
+	}
+
+	/**
+	 * A shortcut to {@code in(containsInAnyOrder(items))}.
+	 * @param items the value of condition
+	 */
+	public static IsColumnExpressed inAnyOrder(Object... items) {
+		return in(IsIterableContainingInAnyOrder.containsInAnyOrder(items));
+	}
+
+	/**
+	 * Creates a matcher that matches when the examined column has
+	 * NOT_IN condition with value matched with the specified {@code matcher}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_NotInScope(Arrays.asList("John Doe", "Jane Doe"));
+	 * assertThat(cb, hasCondition("memberName", notIn(contains("John Doe", "Jane Doe"))));
+	 * }</pre>
+	 * @param matcher a matcher that evaluates the condition value
+	 */
+	public static IsColumnExpressed notIn(Matcher<?> matcher) {
+		return IsColumnExpressed.expressed(ComparisonOperator.NOT_IN, matcher);
+	}
+
+	/**
+	 * A shortcut to {@code notIn(contains(items))}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_NotInScope(Arrays.asList("John Doe", "Jane Doe"));
+	 * assertThat(cb, hasCondition("memberName", notIn("John Doe", "Jane Doe")));
+	 * }</pre>
+	 * @param items the value of condition
+	 */
+	public static IsColumnExpressed notIn(Object... items) {
+		return notIn(IsIterableContainingInOrder.contains(items));
+	}
+
+	/**
+	 * A shortcut to {@code notIn(containsInAnyOrder(items))}.
+	 * @param items the value of condition
+	 */
+	public static IsColumnExpressed notInAnyOrder(Object... items) {
+		return notIn(IsIterableContainingInAnyOrder.containsInAnyOrder(items));
+	}
+
+	/**
+	 * Creates a matcher that matches when the examined column has
+	 * LIKE condition with value matched with the specified {@code matcher}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_LikeSearch("John", op -> op.likePrefix());
+	 * assertThat(cb, hasCondition("memberName", like(equalTo("John%"))));
+	 * }</pre>
+	 * @param matcher a matcher that evaluates the condition value
+	 */
+	public static IsColumnExpressed like(Matcher<?> matcher) {
+		return IsColumnExpressed.expressed(ComparisonOperator.LIKE, matcher);
+	}
+
+	/**
+	 * A shortcut to {@code like(equalTo(value))}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_LikeSearch("John", op -> op.likePrefix());
+	 * assertThat(cb, hasCondition("memberName", like("John%")));
+	 * }</pre>
+	 * @param value the value of condition
+	 */
+	public static IsColumnExpressed like(Object value) {
+		return like(IsEqual.equalTo(value));
+	}
+
+	/**
+	 * A shortcut to {@code like(equalTo(value + "%"))}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_LikeSearch("John", op -> op.likePrefix());
+	 * assertThat(cb, hasCondition("memberName", likePrefix("John")));
+	 * }</pre>
+	 * @param value the value of condition
+	 */
+	public static IsColumnExpressed likePrefix(String value) {
+		return like(IsEqual.equalTo(value + "%"));
+	}
+
+	/**
+	 * A shortcut to {@code like(equalTo("%" + value))}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_LikeSearch("Doe", op -> op.likeSuffix());
+	 * assertThat(cb, hasCondition("memberName", likeSuffix("Doe")));
+	 * }</pre>
+	 * @param value the value of condition
+	 */
+	public static IsColumnExpressed likeSuffix(String value) {
+		return like(IsEqual.equalTo("%" + value));
+	}
+
+	/**
+	 * A shortcut to {@code like(equalTo("%" + value + "%"))}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_LikeSearch("n D", op -> op.likeContain());
+	 * assertThat(cb, hasCondition("memberName", likeContain("n D")));
+	 * }</pre>
+	 * @param value the value of condition
+	 */
+	public static IsColumnExpressed likeContain(String value) {
+		return like(IsEqual.equalTo("%" + value + "%"));
+	}
+
+	/**
+	 * Creates a matcher that matches when the examined column has
+	 * NOT_LIKE condition with value matched with the specified {@code matcher}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_NotLikeSearch("John", op -> op.likePrefix());
+	 * assertThat(cb, hasCondition("memberName", notLike(equalTo("John%"))));
+	 * }</pre>
+	 * @param matcher a matcher that evaluates the condition value
+	 */
+	public static IsColumnExpressed notLike(Matcher<?> matcher) {
+		return IsColumnExpressed.expressed(ComparisonOperator.NOT_LIKE, matcher);
+	}
+
+	/**
+	 * A shortcut to {@code notLike(equalTo(value))}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_NotLikeSearch("John", op -> op.likePrefix());
+	 * assertThat(cb, hasCondition("memberName", notLike("John%")));
+	 * }</pre>
+	 * @param value the value of condition
+	 */
+	public static IsColumnExpressed notLike(Object value) {
+		return notLike(IsEqual.equalTo(value));
+	}
+
+	/**
+	 * A shortcut to {@code notLike(equalTo(value + "%"))}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_NotLikeSearch("John", op -> op.likePrefix());
+	 * assertThat(cb, hasCondition("memberName", notLikePrefix("John")));
+	 * }</pre>
+	 * @param value the value of condition
+	 */
+	public static IsColumnExpressed notLikePrefix(String value) {
+		return notLike(IsEqual.equalTo(value + "%"));
+	}
+
+	/**
+	 * A shortcut to {@code notLike(equalTo("%" + value))}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_NotLikeSearch("Doe", op -> op.likeSuffix());
+	 * assertThat(cb, hasCondition("memberName", notLikeSuffix("Doe")));
+	 * }</pre>
+	 * @param value the value of condition
+	 */
+	public static IsColumnExpressed notLikeSuffix(String value) {
+		return notLike(IsEqual.equalTo("%" + value));
+	}
+
+	/**
+	 * A shortcut to {@code notLike(equalTo("%" + value + "%"))}.
+	 * <p>Example:
+	 * <pre>{@code
+	 * cb.query().setMemberName_NotLikeSearch("n D", op -> op.likeContain());
+	 * assertThat(cb, hasCondition("memberName", notLikeContain("n D")));
+	 * }</pre>
+	 * @param value the value of condition
+	 */
+	public static IsColumnExpressed notLikeContain(String value) {
+		return notLike(IsEqual.equalTo("%" + value + "%"));
 	}
 
 	/**
