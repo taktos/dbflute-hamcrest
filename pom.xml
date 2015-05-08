@@ -5,15 +5,80 @@
 	<groupId>org.dbflute.testing</groupId>
 	<artifactId>dbflute-hamcrest</artifactId>
 	<version>2.0.0-SNAPSHOT</version>
-	<name>Testing support library for DBFlute.</name>
+
+	<name>DBFlute Hamcrest</name>
+	<description>
+		<![CDATA[
+		This is a testing support library for DBFlute that helps you to free unit testing from the database.
+		It provides ConditionBean matchers, utilities for mock Behavior and some JUnit helpers.
+		]]>
+	</description>
+	<url>http://taktos.github.io/dbflute-hamcrest</url>
+	<inceptionYear>2015</inceptionYear>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<dbflute.version>1.1.0-sp2</dbflute.version>
 		<junit.version>4.12</junit.version>
 		<hamcrest.version>2.0.0.0</hamcrest.version>
 		<mockito.version>2.0.5-beta</mockito.version>
 	</properties>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<organization>
+		<name>The DBFlute Project</name>
+		<url>http://dbflute.org</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>taktos</id>
+			<name>Toshio Takiguchi</name>
+			<email>taktos@gmail.com</email>
+			<timezone>+9</timezone>
+		</developer>
+	</developers>
+
+	<issueManagement>
+		<system>Github</system>
+		<url>https://github.com/taktos/dbflute-hamcrest/issues</url>
+	</issueManagement>
+	<mailingLists>
+		<mailingList>
+			<name>DBFlute-users</name>
+			<subscribe>https://groups.google.com/forum/#!forum/dbflute</subscribe>
+			<unsubscribe>https://groups.google.com/forum/#!forum/dbflute</unsubscribe>
+			<post>dbflute@googlegroups.com</post>
+			<archive>https://groups.google.com/forum/#!forum/dbflute</archive>
+		</mailingList>
+	</mailingLists>
+
+	<scm>
+		<connection>scm:git:git@github.com:taktos/dbflute-hamcrest.git</connection>
+		<developerConnection>scm:git:git@github.com:taktos/dbflute-hamcrest.git</developerConnection>
+		<url>https://github.com/taktos/dbflute-hamcrest</url>
+	</scm>
+	<distributionManagement>
+		<site>
+			<id>taktos.github.io</id>
+			<name>Github Pages</name>
+			<url>scm:git:git@github.com:taktos/dbflute-hamcrest.git</url>
+		</site>
+	</distributionManagement>
+
+	<parent>
+		<!-- http://repo.maven.apache.org/maven2/org/sonatype/oss/oss-parent/9/oss-parent-9.pom -->
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>9</version>
+	</parent>
 
 	<build>
 		<pluginManagement>
@@ -27,8 +92,57 @@
 						<target>1.6</target>
 					</configuration>
 				</plugin>
+				<plugin>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.4</version>
+					<configuration>
+						<locales>en,ja</locales>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>2.8</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
+		<plugins>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.doxia</groupId>
+						<artifactId>doxia-module-markdown</artifactId>
+						<version>1.6</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.bcel</groupId>
+						<artifactId>bcel</artifactId>
+						<version>6.0-SNAPSHOT</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.11</version>
+				<configuration>
+					<message>Creating site for ${project.version}</message>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<phase>site</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 
 	<dependencyManagement>
@@ -90,4 +204,61 @@
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>index</report>
+							<report>summary</report>
+							<report>dependencies</report>
+							<report>dependency-info</report>
+							<report>project-team</report>
+							<report>license</report>
+							<report>mailing-list</report>
+							<report>scm</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<configuration>
+					<reportOutputDirectory>${project.reporting.outputDirectory}/v2</reportOutputDirectory>
+					<destDir>v2/apidocs</destDir>
+					<failOnError>false</failOnError>
+					<quiet>true</quiet>
+					<links>
+						<link>http://docs.mockito.googlecode.com/hg/latest/</link>
+						<link>http://hamcrest.org/JavaHamcrest/javadoc/1.3/</link>
+						<link>http://junit.org/javadoc/latest/</link>
+					</links>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+					<locales>en,ja</locales>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<repositories>
+		<repository>
+			<id>snapshot-repository.apache.org</id>
+			<url>https://repository.apache.org/content/groups/snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+	</repositories>
 </project>

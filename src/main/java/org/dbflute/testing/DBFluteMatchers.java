@@ -43,6 +43,7 @@ public final class DBFluteMatchers {
 
     /**
      * Creates a method argument captor.
+     * @param <T> the type of {@code clazz}
      * @param clazz the class of ConditionBean implementation
      * @return captor
      */
@@ -52,6 +53,7 @@ public final class DBFluteMatchers {
 
     /**
      * Allows creating custom argument matcher that evaluates ConditionBean.
+     * @param <T> the type of {@code clazz}
      * @param cbclass class of ConditionBean implementation
      * @param matcher the matcher to apply to ConditionBean
      * @return <code>null</code>
@@ -65,6 +67,7 @@ public final class DBFluteMatchers {
      * Creates an argument matcher that evaluates ConditionBean.
      * @param cbclass class of ConditionBean implementation
      * @param matcher the matcher to apply to ConditionBean
+     * @param <T> the type of {@code clazz}
      * @return argument matcher
      */
     public static <T extends ConditionBean> BehaviorArgumentMatcher<T> cb(Class<T> cbclass, Matcher<T> matcher) {
@@ -76,6 +79,7 @@ public final class DBFluteMatchers {
      * and pass it to subsequent matcher.
      * @param column the name of column which evaluates
      * @param matcher the matcher that evaluates {@link org.dbflute.cbean.cvalue.ConditionValue}
+     * @param <T> the type of {@code clazz}
      */
     public static <T extends ConditionBean> HasCondition<T> hasCondition(String column, Matcher<?> matcher) {
         return new HasCondition<T>(column, matcher);
@@ -86,6 +90,7 @@ public final class DBFluteMatchers {
      * and pass it to subsequent matcher.
      * @param table the name of relating table which evaluates
      * @param hasCondition the matcher that evaluates {@link org.dbflute.cbean.ConditionQuery}
+     * @param <T> the type of {@code clazz}
      */
     public static <T extends ConditionBean> HasRelation<T> hasRelation(String table, HasCondition<T> hasCondition) {
         return new HasRelation<T>(table, hasCondition);
@@ -97,6 +102,7 @@ public final class DBFluteMatchers {
      * @param table the name of relating table
      * @param column the name of column which evaluates
      * @param matcher the matcher that evaluates {@link org.dbflute.cbean.cvalue.ConditionValue}
+     * @param <T> the type of {@code clazz}
      */
     public static <T extends ConditionBean> HasRelation<T> hasRelationCondition(String table, String column, Matcher<?> matcher) {
         return new HasRelation<T>(table, new HasCondition<T>(column, matcher));
@@ -498,6 +504,7 @@ public final class DBFluteMatchers {
      * assertThat(cb, shouldSelect("memberService.serviceRank.serviceRankName"));
      * }</pre>
      * @param columnName the name of column
+     * @param <T> the type of {@code clazz}
      */
     public static <T extends ConditionBean> ShouldSelect<T> shouldSelect(String columnName) {
         return ShouldSelect.shouldSelect(columnName);
