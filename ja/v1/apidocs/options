@@ -1,0 +1,31 @@
+-classpath
+'C:/Users/takiguchi/.m2/repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar;C:/Users/takiguchi/.m2/repository/org/mockito/mockito-core/1.10.19/mockito-core-1.10.19.jar;C:/Users/takiguchi/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar;C:/Users/takiguchi/.m2/repository/org/seasar/dbflute/dbflute-runtime/1.0.5N/dbflute-runtime-1.0.5N.jar;C:/Users/takiguchi/.m2/repository/junit/junit/4.12/junit-4.12.jar'
+-encoding
+'UTF-8'
+-protected
+-quiet
+-sourcepath
+'C:/projects/oss/dbflute/dbflute-testing/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2015 <a href="http://dbflute.org">The DBFlute Project</a>. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/projects/oss/dbflute/dbflute-testing/target/site/ja/v1/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'DBFlute Hamcrest 1.0.0-SNAPSHOT API'
+-link
+'http://docs.mockito.googlecode.com/hg/latest'
+-link
+'http://hamcrest.org/JavaHamcrest/javadoc/1.3'
+-link
+'http://junit.org/javadoc/latest'
+-linkoffline
+'http://docs.oracle.com/javase/6/docs/api' 'C:/projects/oss/dbflute/dbflute-testing/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'DBFlute Hamcrest 1.0.0-SNAPSHOT API'
