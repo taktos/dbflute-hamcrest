@@ -16,7 +16,7 @@
 -docencoding
 'UTF-8'
 -doctitle
-'DBFlute Hamcrest 2.0.0-SNAPSHOT API'
+'DBFlute Hamcrest 2.0.0 API'
 -link
 'http://docs.mockito.googlecode.com/hg/latest'
 -link
@@ -28,4 +28,4 @@
 -use
 -version
 -windowtitle
-'DBFlute Hamcrest 2.0.0-SNAPSHOT API'
+'DBFlute Hamcrest 2.0.0 API'
